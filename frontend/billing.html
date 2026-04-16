@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Billing — Luminescent Cloud</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "secondary-fixed-dim": "#fdb881", "tertiary-fixed": "#c7e7ff", "surface-container-low": "#1b1b1b",
+                    "surface-container-highest": "#353535", "on-error-container": "#ffdad6", "surface-variant": "#353535",
+                    "outline-variant": "#564334", "outline": "#a48c7a", "on-tertiary-container": "#004360",
+                    "on-surface": "#e2e2e2", "error-container": "#93000a", "surface-tint": "#ffb77d",
+                    "surface-dim": "#131313", "primary-container": "#ff8c00", "on-primary-fixed": "#2f1500",
+                    "tertiary-container": "#00b5fc", "primary-fixed-dim": "#ffb77d", "on-secondary-container": "#e9a771",
+                    "on-background": "#e2e2e2", "on-primary-container": "#623200", "inverse-primary": "#904d00",
+                    "inverse-on-surface": "#303030", "surface-container-lowest": "#0e0e0e", "surface": "#131313",
+                    "background": "#131313", "surface-container": "#1f1f1f", "on-secondary-fixed-variant": "#6a3b0f",
+                    "on-secondary": "#4d2600", "on-primary-fixed-variant": "#6e3900", "secondary-fixed": "#ffdcc3",
+                    "on-surface-variant": "#ddc1ae", "on-tertiary-fixed": "#001e2e", "on-tertiary": "#00344c",
+                    "on-secondary-fixed": "#2f1500", "on-tertiary-fixed-variant": "#004c6c", "surface-bright": "#393939",
+                    "tertiary": "#85cfff", "primary-fixed": "#ffdcc3", "secondary-container": "#6a3b0f",
+                    "on-primary": "#4d2600", "error": "#ffb4ab", "tertiary-fixed-dim": "#85cfff",
+                    "on-error": "#690005", "inverse-surface": "#e2e2e2", "surface-container-high": "#2a2a2a",
+                    "primary": "#ffb77d", "secondary": "#fdb881"
+                },
+                fontFamily: {
+                    "headline": ["Plus Jakarta Sans", "sans-serif"],
+                    "body": ["Inter", "sans-serif"],
+                    "label": ["Inter", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+                }
+            }
+        }
+    }
+</script>
+<style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0e0e0e; }
+    ::-webkit-scrollbar-thumb { background: #353535; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ffb77d; }
+    #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+    .toast-item { max-width: 350px; padding: 1rem; border-radius: 0.5rem; color: #fff; background: #353535; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 4px solid #ffb77d; font-family: 'Inter', sans-serif; font-size: 0.875rem; }
+    .toast-item.show { transform: translateX(0); }
+    .toast-error { border-left-color: #ffb4ab; }
+    .toast-success { border-left-color: #85cfff; }
+</style>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+
+<main class="flex-1 bg-surface min-h-screen flex flex-col relative z-10 w-full">
+
+<header class="bg-[#131313] w-full sticky top-0 z-40 border-b border-white/5 shadow-md font-['Inter']">
+    <div class="px-6 h-16 flex items-center justify-between">
+        <!-- Brand -->
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center border border-outline-variant/20 shadow-[0_0_15px_rgba(255,140,0,0.1)]">
+                    <span class="material-symbols-outlined text-primary text-[18px]">cloud</span>
+                </div>
+                <div>
+                    <h1 class="font-headline font-black text-sm md:text-base text-orange-500 uppercase tracking-widest leading-none hidden sm:block">Global</h1>
+                </div>
+            </div>
+            
+            <!-- Desktop Nav -->
+            <nav id="topbar-nav" class="hidden lg:flex items-center space-x-1 text-sm tracking-wide ml-2 xl:ml-4">
+                <a href="index.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">dashboard</span><span class="font-medium">Dashboard</span>
+                </a>
+                <a href="users.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">group</span><span class="font-medium">Users</span>
+                </a>
+                <a href="resources.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">dns</span><span class="font-medium">Resources</span>
+                </a>
+                <a href="usage.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">monitoring</span><span class="font-medium">Usage Logs</span>
+                </a>
+                <a href="billing.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">payments</span><span class="font-medium">Billing</span>
+                </a>
+                <a href="suggestions.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2 hidden xl:flex">
+                    <span class="material-symbols-outlined text-[18px]">tips_and_updates</span><span class="font-medium">Suggestions</span>
+                </a>
+                <a href="reports.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2 hidden xl:flex">
+                    <span class="material-symbols-outlined text-[18px]">receipt_long</span><span class="font-medium">Reports</span>
+                </a>
+                <a href="transactions.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2 hidden xl:flex">
+                    <span class="material-symbols-outlined text-[18px]">sync_alt</span><span class="font-medium">Transactions</span>
+                </a>
+                
+                <!-- More Dropdown for intermediate desktop sizes -->
+                <div class="relative group xl:hidden flex items-center">
+                    <button class="px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-1">
+                        <span class="font-medium">More</span> <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                    </button>
+                    <!-- invisible padding bridge to prevent mouse leave -->
+                    <div class="absolute top-[80%] left-0 w-full h-4"></div>
+                    <div class="absolute top-full left-0 mt-2 w-48 bg-[#1B1B1B] border border-white/10 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 py-1 font-body">
+                        <a href="suggestions.html" class="nav-link flex items-center gap-2 px-4 py-2 text-neutral-400 hover:text-white hover:bg-white/5"><span class="material-symbols-outlined text-[16px]">tips_and_updates</span> Suggestions</a>
+                        <a href="reports.html" class="nav-link flex items-center gap-2 px-4 py-2 text-neutral-400 hover:text-white hover:bg-white/5"><span class="material-symbols-outlined text-[16px]">receipt_long</span> Reports</a>
+                        <a href="transactions.html" class="nav-link flex items-center gap-2 px-4 py-2 text-neutral-400 hover:text-white hover:bg-white/5"><span class="material-symbols-outlined text-[16px]">sync_alt</span> Transactions</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Page Name for Tablet / Mobile -->
+        <div class="lg:hidden text-sm font-medium text-on-surface flex items-center gap-2 font-headline tracking-wide">
+            <span class="material-symbols-outlined text-[18px] text-primary">cloud</span> 
+            Billing
+        </div>
+
+        <div class="flex items-center gap-4">
+            <button class="text-neutral-400 hover:text-orange-300 transition-colors hidden sm:block">
+                <span class="material-symbols-outlined text-[20px]">notifications</span>
+            </button>
+            <button class="lg:hidden text-on-surface hover:text-primary transition-colors" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <div id="mobile-menu" class="hidden lg:hidden border-t border-white/5 bg-[#0E0E0E] px-4 py-3 space-y-1 shadow-inner max-h-[60vh] overflow-y-auto">
+        <a href="index.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">dashboard</span> Dashboard
+        </a>
+        <a href="users.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">group</span> Users
+        </a>
+        <a href="resources.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">dns</span> Resources
+        </a>
+        <a href="usage.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">monitoring</span> Usage Logs
+        </a>
+        <a href="billing.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">payments</span> Billing
+        </a>
+        <a href="suggestions.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">tips_and_updates</span> Suggestions
+        </a>
+        <a href="reports.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">receipt_long</span> Reports
+        </a>
+        <a href="transactions.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">sync_alt</span> Transactions
+        </a>
+    </div>
+</header>
+
+
+<div class="p-6 md:p-8 lg:p-10 max-w-7xl mx-auto w-full space-y-8 pb-24">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <p class="font-label text-sm uppercase tracking-[0.1em] text-on-surface-variant mb-2">Cost Optimization Center</p>
+            <h2 class="font-headline text-3xl md:text-4xl font-bold text-on-surface tracking-tight mb-2">Billing Computation</h2>
+            <p class="font-body text-on-surface-variant text-sm max-w-2xl">Trigger-computed costs & stored procedure controls.</p>
+        </div>
+    </div>
+
+    <!-- Trigger Banner -->
+    <div class="bg-surface-container-high rounded-xl p-4 border border-outline-variant/20 flex gap-3">
+        <span class="material-symbols-outlined text-primary mt-1">electric_bolt</span>
+        <div>
+            <strong class="font-headline text-on-surface text-sm">Triggers active on this page:</strong>
+            <ul class="mt-2 space-y-1 text-sm text-on-surface-variant">
+                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-tertiary text-[16px]">check_circle</span> <code>calc_total_cost</code> — auto-computes <code>total_cost = usage_hours × cost_per_hour</code> on INSERT</li>
+                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-error text-[16px]">cancel</span> <code>check_usage_hours</code> — rejects INSERT if <code>usage_hours &lt; 0</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Top Row: Form and Stored Proc -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Add Billing Record Form (Span 2) -->
+        <div class="lg:col-span-2 bg-surface-container rounded-xl p-8 flex flex-col justify-between border border-outline-variant/15">
+            <div>
+                <div class="flex items-center gap-3 mb-8">
+                    <span class="material-symbols-outlined text-primary">post_add</span>
+                    <h2 class="font-headline text-xl font-semibold text-on-surface">Add Manual Record</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2 md:col-span-2">
+                        <label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-medium">Target Resource</label>
+                        <div class="relative">
+                            <select id="b-resource" class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg p-3 text-on-surface font-mono text-sm appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all cursor-pointer">
+                                <option value="">Select resource...</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-2">
+                        <label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-medium">Usage Hours</label>
+                        <div class="relative">
+                            <input id="b-hours" class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg p-3 text-on-surface font-mono text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all" step="0.5" placeholder="e.g. 720" type="number"/>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-2">
+                        <label class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant font-medium">Base Rate / Hr</label>
+                        <div class="relative">
+                            <input id="b-rate" class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg p-3 pl-8 text-on-surface font-mono text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition-all" step="0.0001" placeholder="e.g. 0.0116" type="number"/>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm font-mono select-none">₹</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-xs font-mono text-on-surface-variant p-3 bg-surface-container-lowest rounded border border-outline-variant/10">
+                    <span class="material-symbols-outlined text-[14px] align-middle text-tertiary">lightbulb</span> `total_cost` is calculated automatically by the DB trigger upon submission.
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end items-center gap-4 border-t border-outline-variant/10 pt-6">
+                <button onclick="tryNegativeHours()" class="px-4 py-2.5 rounded-lg font-medium text-sm text-error bg-error/10 hover:bg-error/20 border border-error/20 transition-colors flex items-center gap-2" type="button">
+                    <span class="material-symbols-outlined text-[18px]">warning</span> Try Negative Hours
+                </button>
+                <button onclick="addBill()" class="bg-primary-container text-on-primary-container px-6 py-2.5 rounded-lg font-medium text-sm hover:bg-[#ff9d22] transition-all hover:shadow-[0_0_20px_rgba(255,140,0,0.25)] flex items-center gap-2" type="submit">
+                    <span class="material-symbols-outlined text-[18px]">add</span> Inject Record
+                </button>
+            </div>
+        </div>
+        
+        <!-- Stored Procedure Execution Card -->
+        <div class="bg-surface-container-high rounded-xl p-8 relative overflow-hidden flex flex-col border-t-2 border-primary before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:to-transparent before:pointer-events-none group">
+            <div class="flex justify-between items-start mb-6 relative z-10">
+                <h2 class="font-headline text-xl font-semibold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">terminal</span> Batch Compute
+                </h2>
+                <div class="bg-surface-container-lowest px-2 py-1 rounded text-[10px] font-mono text-on-surface-variant uppercase tracking-wider border border-outline-variant/20">
+                    PROC_v2.4
+                </div>
+            </div>
+            <p class="font-body text-sm text-on-surface-variant mb-8 relative z-10 leading-relaxed">
+                Calls <code>CALL show_billing()</code> procedure — returns a joined billing summary with owner, resource, and cost details.
+            </p>
+            <button onclick="runProcedure()" class="mt-auto w-full bg-surface-container-lowest border border-primary/40 text-primary hover:bg-primary/10 px-6 py-3 rounded-lg font-mono text-sm transition-all flex justify-center items-center gap-3 relative z-10 group-hover:border-primary/80 group-hover:shadow-[0_0_15px_rgba(255,140,0,0.15)]">
+                <span class="material-symbols-outlined text-[18px]">play_arrow</span> EXECUTE_PROCEDURE
+            </button>
+        </div>
+        
+    </div>
+
+    <!-- Data Table -->
+    <div class="bg-surface-container-high rounded-xl border border-outline-variant/15 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
+        <div class="p-6 pb-4 border-b border-surface-variant/20 flex justify-between items-center">
+            <h3 class="font-headline text-lg font-semibold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-on-surface-variant">table_rows</span> Billing Records
+            </h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse whitespace-nowrap">
+                <thead>
+                    <tr class="bg-surface-container-lowest/50 border-b border-outline-variant/10">
+                        <th class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant py-4 px-6 font-medium">Record ID</th>
+                        <th class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant py-4 px-6 font-medium">Owner</th>
+                        <th class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant py-4 px-6 font-medium">Resource</th>
+                        <th class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant py-4 px-6 font-medium text-right">Usage (HRS)</th>
+                        <th class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant py-4 px-6 font-medium text-right">Rate/Hr</th>
+                        <th class="font-label text-[10px] uppercase tracking-widest text-tertiary py-4 px-6 font-medium text-right">Total Cost</th>
+                        <th class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant py-4 px-6 font-medium text-right">Date</th>
+                        <th class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant py-4 px-6 font-medium text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="billing-tbody" class="font-mono text-sm divide-y divide-surface-variant/10">
+                    <tr><td colspan="8" class="text-center py-6 text-on-surface-variant">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</main>
+
+<!-- Tailwind Modal for Procedure Results -->
+<div id="procModal" class="tailwind-modal hidden relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="modal-backdrop fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0"></div>
+
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+      <div class="modal-panel relative transform overflow-hidden rounded-xl bg-surface-container-high text-left shadow-2xl transition-all w-full sm:max-w-5xl border border-outline-variant/20 opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+        
+        <div class="px-6 py-4 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container">
+            <h3 class="text-lg font-headline font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">terminal</span> show_billing() Output
+            </h3>
+            <button type="button" onclick="closeModal('procModal')" class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <div class="p-6 font-mono text-sm overflow-x-auto min-h-[200px]" id="proc-modal-body">
+            <p class="text-on-surface-variant">Loading...</p>
+        </div>
+
+        <div class="px-6 py-4 bg-surface-container border-t border-outline-variant/10 flex justify-end">
+            <button type="button" onclick="closeModal('procModal')" class="px-6 py-2 bg-surface-container-highest hover:bg-surface-bright text-on-surface rounded-md font-medium text-sm transition-colors border border-outline-variant/20">Close Output</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+async function init() {
+  const resources = await apiGet("/resources");
+  const sel = document.getElementById("b-resource");
+  resources.forEach(r => {
+    sel.insertAdjacentHTML("beforeend",
+      `<option value="${r.resource_id}">${r.resource_id} — ${r.resource_type} (${r.instance_type})</option>`);
+  });
+  loadBilling();
+}
+
+async function loadBilling() {
+  try {
+    const data = await apiGet("/billing");
+    const tbody = document.getElementById("billing-tbody");
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" class="text-on-surface-variant text-center py-6">No billing records.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(b => `
+      <tr class="hover:bg-surface-container-high/30 transition-colors group">
+        <td class="py-4 px-6 text-on-surface-variant group-hover:text-primary transition-colors">BILL-${b.bill_id}</td>
+        <td class="py-4 px-6 text-on-surface font-body">${b.owner_name}</td>
+        <td class="py-4 px-6 text-on-surface font-body">${b.resource_type} <span class="text-xs text-on-surface-variant">/ ${b.instance_type}</span></td>
+        <td class="py-4 px-6 text-on-surface text-right">${b.usage_hours}</td>
+        <td class="py-4 px-6 text-on-surface-variant text-right">₹${parseFloat(b.cost_per_hour).toFixed(4)}</td>
+        <td class="py-4 px-6 text-tertiary text-right font-medium">₹${parseFloat(b.total_cost).toFixed(2)}</td>
+        <td class="py-4 px-6 text-on-surface-variant text-xs text-right">${b.billing_date}</td>
+        <td class="py-4 px-6 text-right">
+            <button class="text-error hover:text-error/70 transition-colors" onclick="deleteBill(${b.bill_id})">
+                <span class="material-symbols-outlined text-[18px]">delete</span>
+            </button>
+        </td>
+      </tr>`).join("");
+  } catch(e) {
+    showToast("Error: " + e.message, "error");
+  }
+}
+
+async function addBill() {
+  const body = {
+    resource_id: document.getElementById("b-resource").value,
+    usage_hours: document.getElementById("b-hours").value,
+    cost_per_hour: document.getElementById("b-rate").value,
+  };
+  if (!body.resource_id || !body.usage_hours || !body.cost_per_hour) {
+    showToast("All fields are required.", "error"); return;
+  }
+  try {
+    const data = await apiPost("/billing", body);
+    showToast(`Bill inserted! Trigger computed target: ₹${data.total_cost}`, "success");
+    loadBilling();
+  } catch(e) {
+    showToast("Error: " + e.message, "error");
+  }
+}
+
+async function tryNegativeHours() {
+  try {
+    const body = {
+      resource_id: document.getElementById("b-resource").value || "1",
+      usage_hours: -5,
+      cost_per_hour: 0.05,
+    };
+    await apiPost("/billing", body);
+    showToast("Unexpected success — trigger should have rejected this!", "error");
+  } catch(e) {
+    showToast("Trigger fired! check_usage_hours rejected: " + e.message, "error");
+  }
+}
+
+async function deleteBill(id) {
+  if (!confirm("Delete bill " + id + "?")) return;
+  try {
+    await apiDelete(`/billing/${id}`);
+    showToast("Bill deleted.", "success");
+    loadBilling();
+  } catch(e) {
+    showToast("Error: " + e.message, "error");
+  }
+}
+
+async function runProcedure() {
+  openModal('procModal');
+  document.getElementById("proc-modal-body").innerHTML = '<p class="text-on-surface-variant animate-pulse">Executing CALL show_billing()...</p>';
+  try {
+    const rows = await apiPost("/procedures/show-billing");
+    renderTable("proc-modal-body", rows);
+  } catch(e) {
+    document.getElementById("proc-modal-body").innerHTML = `<p class="text-error">Error: ${e.message}</p>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

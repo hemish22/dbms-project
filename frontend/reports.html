@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reports — Luminescent Cloud</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "secondary-fixed-dim": "#fdb881", "tertiary-fixed": "#c7e7ff", "surface-container-low": "#1b1b1b",
+                    "surface-container-highest": "#353535", "on-error-container": "#ffdad6", "surface-variant": "#353535",
+                    "outline-variant": "#564334", "outline": "#a48c7a", "on-tertiary-container": "#004360",
+                    "on-surface": "#e2e2e2", "error-container": "#93000a", "surface-tint": "#ffb77d",
+                    "surface-dim": "#131313", "primary-container": "#ff8c00", "on-primary-fixed": "#2f1500",
+                    "tertiary-container": "#00b5fc", "primary-fixed-dim": "#ffb77d", "on-secondary-container": "#e9a771",
+                    "on-background": "#e2e2e2", "on-primary-container": "#623200", "inverse-primary": "#904d00",
+                    "inverse-on-surface": "#303030", "surface-container-lowest": "#0e0e0e", "surface": "#131313",
+                    "background": "#131313", "surface-container": "#1f1f1f", "on-secondary-fixed-variant": "#6a3b0f",
+                    "on-secondary": "#4d2600", "on-primary-fixed-variant": "#6e3900", "secondary-fixed": "#ffdcc3",
+                    "on-surface-variant": "#ddc1ae", "on-tertiary-fixed": "#001e2e", "on-tertiary": "#00344c",
+                    "on-secondary-fixed": "#2f1500", "on-tertiary-fixed-variant": "#004c6c", "surface-bright": "#393939",
+                    "tertiary": "#85cfff", "primary-fixed": "#ffdcc3", "secondary-container": "#6a3b0f",
+                    "on-primary": "#4d2600", "error": "#ffb4ab", "tertiary-fixed-dim": "#85cfff",
+                    "on-error": "#690005", "inverse-surface": "#e2e2e2", "surface-container-high": "#2a2a2a",
+                    "primary": "#ffb77d", "secondary": "#fdb881"
+                },
+                fontFamily: {
+                    "headline": ["Plus Jakarta Sans", "sans-serif"],
+                    "body": ["Inter", "sans-serif"],
+                    "label": ["Inter", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+                }
+            }
+        }
+    }
+</script>
+<style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0e0e0e; }
+    ::-webkit-scrollbar-thumb { background: #353535; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ffb77d; }
+    #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+    .toast-item { max-width: 350px; padding: 1rem; border-radius: 0.5rem; color: #fff; background: #353535; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 4px solid #ffb77d; font-family: 'Inter', sans-serif; font-size: 0.875rem; }
+    .toast-item.show { transform: translateX(0); }
+    .toast-error { border-left-color: #ffb4ab; }
+    .toast-success { border-left-color: #85cfff; }
+</style>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+
+<main class="flex-1 bg-surface min-h-screen flex flex-col relative z-10 w-full">
+
+<header class="bg-[#131313] w-full sticky top-0 z-40 border-b border-white/5 shadow-md font-['Inter']">
+    <div class="px-6 h-16 flex items-center justify-between">
+        <!-- Brand -->
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center border border-outline-variant/20 shadow-[0_0_15px_rgba(255,140,0,0.1)]">
+                    <span class="material-symbols-outlined text-primary text-[18px]">cloud</span>
+                </div>
+                <div>
+                    <h1 class="font-headline font-black text-sm md:text-base text-orange-500 uppercase tracking-widest leading-none hidden sm:block">Global</h1>
+                </div>
+            </div>
+            
+            <!-- Desktop Nav -->
+            <nav id="topbar-nav" class="hidden lg:flex items-center space-x-1 text-sm tracking-wide ml-2 xl:ml-4">
+                <a href="index.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">dashboard</span><span class="font-medium">Dashboard</span>
+                </a>
+                <a href="users.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">group</span><span class="font-medium">Users</span>
+                </a>
+                <a href="resources.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">dns</span><span class="font-medium">Resources</span>
+                </a>
+                <a href="usage.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">monitoring</span><span class="font-medium">Usage Logs</span>
+                </a>
+                <a href="billing.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">payments</span><span class="font-medium">Billing</span>
+                </a>
+                <a href="suggestions.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2 hidden xl:flex">
+                    <span class="material-symbols-outlined text-[18px]">tips_and_updates</span><span class="font-medium">Suggestions</span>
+                </a>
+                <a href="reports.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2 hidden xl:flex">
+                    <span class="material-symbols-outlined text-[18px]">receipt_long</span><span class="font-medium">Reports</span>
+                </a>
+                <a href="transactions.html" class="nav-link px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-2 hidden xl:flex">
+                    <span class="material-symbols-outlined text-[18px]">sync_alt</span><span class="font-medium">Transactions</span>
+                </a>
+                
+                <!-- More Dropdown for intermediate desktop sizes -->
+                <div class="relative group xl:hidden flex items-center">
+                    <button class="px-3 py-2 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5 transition-colors flex items-center gap-1">
+                        <span class="font-medium">More</span> <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                    </button>
+                    <!-- invisible padding bridge to prevent mouse leave -->
+                    <div class="absolute top-[80%] left-0 w-full h-4"></div>
+                    <div class="absolute top-full left-0 mt-2 w-48 bg-[#1B1B1B] border border-white/10 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 py-1 font-body">
+                        <a href="suggestions.html" class="nav-link flex items-center gap-2 px-4 py-2 text-neutral-400 hover:text-white hover:bg-white/5"><span class="material-symbols-outlined text-[16px]">tips_and_updates</span> Suggestions</a>
+                        <a href="reports.html" class="nav-link flex items-center gap-2 px-4 py-2 text-neutral-400 hover:text-white hover:bg-white/5"><span class="material-symbols-outlined text-[16px]">receipt_long</span> Reports</a>
+                        <a href="transactions.html" class="nav-link flex items-center gap-2 px-4 py-2 text-neutral-400 hover:text-white hover:bg-white/5"><span class="material-symbols-outlined text-[16px]">sync_alt</span> Transactions</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Page Name for Tablet / Mobile -->
+        <div class="lg:hidden text-sm font-medium text-on-surface flex items-center gap-2 font-headline tracking-wide">
+            <span class="material-symbols-outlined text-[18px] text-primary">cloud</span> 
+            Reports
+        </div>
+
+        <div class="flex items-center gap-4">
+            <button class="text-neutral-400 hover:text-orange-300 transition-colors hidden sm:block">
+                <span class="material-symbols-outlined text-[20px]">notifications</span>
+            </button>
+            <button class="lg:hidden text-on-surface hover:text-primary transition-colors" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <div id="mobile-menu" class="hidden lg:hidden border-t border-white/5 bg-[#0E0E0E] px-4 py-3 space-y-1 shadow-inner max-h-[60vh] overflow-y-auto">
+        <a href="index.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">dashboard</span> Dashboard
+        </a>
+        <a href="users.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">group</span> Users
+        </a>
+        <a href="resources.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">dns</span> Resources
+        </a>
+        <a href="usage.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">monitoring</span> Usage Logs
+        </a>
+        <a href="billing.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">payments</span> Billing
+        </a>
+        <a href="suggestions.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">tips_and_updates</span> Suggestions
+        </a>
+        <a href="reports.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">receipt_long</span> Reports
+        </a>
+        <a href="transactions.html" class="nav-link flex items-center gap-3 py-2 px-3 rounded-md text-neutral-500 hover:text-neutral-200 hover:bg-white/5">
+            <span class="material-symbols-outlined text-[18px]">sync_alt</span> Transactions
+        </a>
+    </div>
+</header>
+
+
+<div class="p-6 md:p-8 lg:p-10 max-w-7xl mx-auto w-full space-y-8 pb-24">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <h2 class="font-headline text-3xl md:text-4xl font-bold text-on-surface tracking-tight mb-2">Reports & Analytics</h2>
+            <p class="font-body text-on-surface-variant text-sm max-w-2xl">Investigate infrastructure anomalies, analyze resource efficiency, and generate custom queries to pinpoint specific cost drivers.</p>
+        </div>
+    </div>
+
+    <!-- Pre-defined Reports Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- High Cost View -->
+        <div class="bg-surface-container-high rounded-xl overflow-hidden border-t-2 border-primary shadow-[0_4px_12px_rgba(0,0,0,0.5)] flex flex-col">
+            <div class="p-6 flex-1 flex flex-col">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="font-headline text-lg font-semibold text-on-surface flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">trending_up</span> High Cost Resources
+                        </h3>
+                        <p class="text-sm text-on-surface-variant mt-1">Resources with total billing > ₹150.</p>
+                    </div>
+                    <span class="bg-error-container/20 text-error text-xs font-medium px-2.5 py-1 rounded-full uppercase tracking-wider">VIEW</span>
+                </div>
+                <!-- Table Output -->
+                <div id="high-cost-result" class="flex-1 w-full mt-2 font-mono text-sm max-h-64 overflow-auto rounded border border-outline-variant/10 bg-surface-container">
+                    <div class="p-3 text-on-surface-variant">Loading...</div>
+                </div>
+            </div>
+            <div class="bg-surface-container px-6 py-3 border-t border-outline-variant/10 flex justify-between items-center">
+                <span class="text-xs text-on-surface-variant font-mono">SELECT * FROM High_Cost</span>
+                <button onclick="runHighCost()" class="text-primary text-sm font-medium hover:text-primary-fixed transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">refresh</span> Run</button>
+            </div>
+        </div>
+
+        <!-- Low CPU View -->
+        <div class="bg-surface-container-high rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.5)] flex flex-col">
+            <div class="p-6 flex-1 flex flex-col">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="font-headline text-lg font-semibold text-on-surface flex items-center gap-2">
+                            <span class="material-symbols-outlined text-secondary">snooze</span> Low CPU Resources
+                        </h3>
+                        <p class="text-sm text-on-surface-variant mt-1">Resources with avg CPU < 5%.</p>
+                    </div>
+                    <span class="bg-secondary-container/20 text-secondary border border-secondary/20 text-xs font-medium px-2.5 py-1 rounded-full uppercase tracking-wider">VIEW</span>
+                </div>
+                <!-- Table Output -->
+                <div id="low-cpu-result" class="flex-1 w-full mt-2 font-mono text-sm max-h-64 overflow-auto rounded border border-outline-variant/10 bg-surface-container">
+                    <div class="p-3 text-on-surface-variant">Loading...</div>
+                </div>
+            </div>
+            <div class="bg-surface-container px-6 py-3 border-t border-outline-variant/10 flex justify-between items-center">
+                <span class="text-xs text-on-surface-variant font-mono">SELECT * FROM Low_CPU</span>
+                <button onclick="runLowCPU()" class="text-primary text-sm font-medium hover:text-primary-fixed transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">refresh</span> Run</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Custom Query Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Query Editor -->
+        <div class="lg:col-span-2 bg-surface-container-high rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.5)] flex flex-col">
+            <h3 class="font-headline text-lg font-semibold text-on-surface mb-2 flex items-center justify-between">
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary">terminal</span> Custom SQL Query</div>
+                <span class="bg-surface-container-highest border border-outline-variant/20 px-2 py-0.5 rounded text-[10px] uppercase font-mono text-on-surface-variant">SELECT Only</span>
+            </h3>
+            
+            <div class="flex-1 bg-surface-container-lowest border border-outline-variant/20 rounded-md p-1 relative font-mono text-sm group focus-within:border-primary focus-within:shadow-[0_0_20px_rgba(255,140,0,0.05)] transition-all min-h-[150px]">
+                <textarea id="custom-sql" class="w-full h-full bg-transparent text-on-surface caret-primary resize-y p-3 outline-none font-mono text-sm border-none focus:ring-0" spellcheck="false" placeholder="SELECT u.name, COUNT(cr.resource_id) AS resource_count&#10;FROM User u&#10;JOIN Cloud_Resource cr ON u.user_id = cr.user_id&#10;GROUP BY u.user_id;"></textarea>
+            </div>
+            
+            <div class="mt-4 flex justify-between items-center">
+                <div class="text-xs text-on-surface-variant">Any standard SQL SELECT statement allowed.</div>
+                <button onclick="runCustomSQL()" class="bg-primary-container text-on-primary-container px-6 py-2.5 rounded-md font-semibold text-sm hover:bg-primary transition-all flex items-center gap-2 hover:shadow-[0_0_15px_rgba(255,140,0,0.3)]">
+                    <span class="material-symbols-outlined text-[18px]">play_arrow</span> Run Query
+                </button>
+            </div>
+
+            <!-- Custom Result Container -->
+            <div id="custom-result" class="mt-4 overflow-auto max-h-64 rounded border border-outline-variant/10"></div>
+        </div>
+
+        <!-- Ask in English (AI Section) -->
+        <div class="bg-surface-container-high rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.5)] flex flex-col relative overflow-hidden group">
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-tertiary/10 rounded-full blur-[40px] pointer-events-none group-hover:scale-110 transition-transform duration-500"></div>
+            
+            <div class="relative z-10 flex flex-col h-full">
+                <h3 class="font-headline text-lg font-semibold text-on-surface mb-2 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-tertiary">auto_awesome</span> Ask in English
+                </h3>
+                <p class="text-xs text-on-surface-variant mb-4">Translate natural language into SQL instantly using AI.</p>
+                
+                <div class="flex flex-col gap-2 mb-4">
+                    <button onclick="setNLQuestion('Which resources cost the most?')" class="text-left py-1 text-sm text-tertiary hover:text-tertiary-fixed transition-colors flex gap-2"><span class="text-on-surface-variant opacity-50">"</span>Which resources cost the most?<span class="text-on-surface-variant opacity-50">"</span></button>
+                    <button onclick="setNLQuestion('Users with idle VMs')" class="text-left py-1 text-sm text-tertiary hover:text-tertiary-fixed transition-colors flex gap-2"><span class="text-on-surface-variant opacity-50">"</span>Users with idle VMs<span class="text-on-surface-variant opacity-50">"</span></button>
+                    <button onclick="setNLQuestion('Show resources with CPU below 5 percent')" class="text-left py-1 text-sm text-tertiary hover:text-tertiary-fixed transition-colors flex gap-2"><span class="text-on-surface-variant opacity-50">"</span>Show resources with CPU below 5 percent<span class="text-on-surface-variant opacity-50">"</span></button>
+                </div>
+                
+                <div class="mt-auto flex flex-col gap-3">
+                    <div class="relative w-full">
+                        <input id="nl-question" class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-md py-2.5 pl-3 pr-10 text-sm text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary focus:outline-none transition-all placeholder:text-on-surface-variant/50" placeholder="Type your question..." type="text"/>
+                        <button onclick="runNL()" id="nl-btn" class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded bg-tertiary/20 text-tertiary flex items-center justify-center hover:bg-tertiary/40 transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">send</span>
+                        </button>
+                    </div>
+                    
+                    <button class="hidden w-full border border-tertiary/30 text-tertiary hover:bg-tertiary/10 py-2 rounded-md text-sm transition-colors flex justify-center items-center gap-2" id="nl-regen" onclick="runNL()">
+                        <span class="material-symbols-outlined text-[16px]">refresh</span> Wrong? Regenerate
+                    </button>
+                </div>
+
+                <!-- NL Result Outputs -->
+                <div id="nl-sql-output" class="hidden mt-4 pt-4 border-t border-outline-variant/10">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">Generated SQL</span>
+                    </div>
+                    <pre id="nl-sql" class="bg-surface-container-lowest p-3 rounded text-tertiary font-mono text-xs overflow-x-auto border border-outline-variant/10"></pre>
+                    <p class="text-xs text-on-surface-variant mt-2 italic" id="nl-explanation"></p>
+                </div>
+                <div id="nl-result" class="mt-4 overflow-auto max-h-64 rounded border border-outline-variant/10 hidden"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</main>
+
+<script src="js/common.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+async function runHighCost() {
+  const container = document.getElementById("high-cost-result");
+  container.innerHTML = '<div class="p-3 text-on-surface-variant animate-pulse">Running queries...</div>';
+  try {
+    const data = await apiGet("/views/high-cost");
+    if(data.length === 0){ container.innerHTML = '<div class="p-3 text-on-surface-variant">No items found.</div>'; return; }
+    renderTable("high-cost-result", data);
+  } catch(e) {
+    container.innerHTML = `<p class="p-3 text-error">${e.message}</p>`;
+  }
+}
+
+async function runLowCPU() {
+  const container = document.getElementById("low-cpu-result");
+  container.innerHTML = '<div class="p-3 text-on-surface-variant animate-pulse">Running queries...</div>';
+  try {
+    const data = await apiGet("/views/low-cpu");
+    if(data.length === 0){ container.innerHTML = '<div class="p-3 text-on-surface-variant">No items found.</div>'; return; }
+    renderTable("low-cpu-result", data);
+  } catch(e) {
+    container.innerHTML = `<p class="p-3 text-error">${e.message}</p>`;
+  }
+}
+
+async function runCustomSQL() {
+  const sql = document.getElementById("custom-sql").value.trim();
+  const container = document.getElementById("custom-result");
+  if (!sql) { showToast("Enter a SQL query first.", "error"); return; }
+  
+  container.innerHTML = '<div class="p-3 text-on-surface-variant animate-pulse">Executing SQL...</div>';
+  try {
+    const data = await apiPost("/custom-sql", { sql });
+    if(data.rows.length === 0){ container.innerHTML = '<div class="p-3 text-on-surface-variant">Query executed. 0 rows returned.</div>'; showToast(`Query returned 0 rows.`, "success"); return; }
+    renderTable("custom-result", data.rows, data.columns);
+    showToast(`Query returned ${data.rows.length} row(s).`, "success");
+  } catch(e) {
+    container.innerHTML = `<div class="p-3 text-error bg-error/10 border border-error/20 rounded text-sm font-mono mt-2">${e.message}</div>`;
+  }
+}
+
+function setNLQuestion(q) {
+  document.getElementById("nl-question").value = q;
+}
+
+async function runNL() {
+  const question = document.getElementById("nl-question").value.trim();
+  if (!question) { showToast("Enter a question first.", "error"); return; }
+
+  const btn = document.getElementById("nl-btn");
+  btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>';
+  btn.disabled = true;
+
+  try {
+    const data = await apiPost("/ai/nl-to-sql", { question });
+
+    document.getElementById("nl-sql").textContent = data.sql;
+    document.getElementById("nl-explanation").textContent = data.explanation || "";
+    document.getElementById("nl-sql-output").classList.remove("hidden");
+    document.getElementById("nl-regen").classList.remove("hidden");
+    
+    document.getElementById("nl-result").classList.remove("hidden");
+    if(data.rows.length === 0){ 
+        document.getElementById("nl-result").innerHTML = '<div class="p-3 text-on-surface-variant text-sm">Query executed. 0 rows returned.</div>'; 
+    } else {
+        renderTable("nl-result", data.rows, data.columns);
+    }
+    showToast(`Query returned ${data.rows.length} row(s).`, "success");
+  } catch(e) {
+    document.getElementById("nl-result").classList.remove("hidden");
+    document.getElementById("nl-result").innerHTML = `<div class="p-3 text-error bg-error/10 text-sm font-mono">${e.message}</div>`;
+  } finally {
+    btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">send</span>';
+    btn.disabled = false;
+  }
+}
+
+// Auto-run both views on page load
+runHighCost();
+runLowCPU();
+</script>
+</body>
+</html>
