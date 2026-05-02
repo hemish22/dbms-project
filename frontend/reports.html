@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Reports — Luminescent Cloud</title>
+<title>Reports — Hashtag Cloud</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -68,7 +68,7 @@
                     <span class="material-symbols-outlined text-primary text-[18px]">cloud</span>
                 </div>
                 <div>
-                    <h1 class="font-headline font-black text-sm md:text-base text-orange-500 uppercase tracking-widest leading-none hidden sm:block">Global</h1>
+                    <h1 class="font-headline font-black text-sm md:text-base text-orange-500 uppercase tracking-widest leading-none hidden sm:block">Hashtag</h1>
                 </div>
             </div>
             
@@ -221,6 +221,28 @@
 
     </div>
 
+    <!-- Resource Owner Summary View -->
+    <div class="bg-surface-container-high rounded-xl overflow-hidden border-t-2 border-tertiary shadow-[0_4px_12px_rgba(0,0,0,0.5)] flex flex-col">
+        <div class="p-6 flex-1 flex flex-col">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h3 class="font-headline text-lg font-semibold text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-tertiary">group_work</span> Resource Owner Summary
+                    </h3>
+                    <p class="text-sm text-on-surface-variant mt-1">Per-user rollup: total resources, billing, and average CPU across all owned instances.</p>
+                </div>
+                <span class="bg-tertiary/10 text-tertiary border border-tertiary/20 text-xs font-medium px-2.5 py-1 rounded-full uppercase tracking-wider">VIEW</span>
+            </div>
+            <div id="owner-summary-result" class="flex-1 w-full mt-2 font-mono text-sm max-h-64 overflow-auto rounded border border-outline-variant/10 bg-surface-container">
+                <div class="p-3 text-on-surface-variant">Loading...</div>
+            </div>
+        </div>
+        <div class="bg-surface-container px-6 py-3 border-t border-outline-variant/10 flex justify-between items-center">
+            <span class="text-xs text-on-surface-variant font-mono">SELECT * FROM Resource_Owner_Summary</span>
+            <button onclick="runOwnerSummary()" class="text-tertiary text-sm font-medium hover:text-tertiary-fixed transition-colors flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">refresh</span> Run</button>
+        </div>
+    </div>
+
     <!-- Custom Query Section -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -370,9 +392,22 @@ async function runNL() {
   }
 }
 
-// Auto-run both views on page load
+async function runOwnerSummary() {
+  const container = document.getElementById("owner-summary-result");
+  container.innerHTML = '<div class="p-3 text-on-surface-variant animate-pulse">Running queries...</div>';
+  try {
+    const data = await apiGet("/views/resource-summary");
+    if(data.length === 0){ container.innerHTML = '<div class="p-3 text-on-surface-variant">No data found.</div>'; return; }
+    renderTable("owner-summary-result", data);
+  } catch(e) {
+    container.innerHTML = `<p class="p-3 text-error">${e.message}</p>`;
+  }
+}
+
+// Auto-run all views on page load
 runHighCost();
 runLowCPU();
+runOwnerSummary();
 </script>
 </body>
 </html>

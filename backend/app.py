@@ -339,9 +339,33 @@ def view_low_cpu():
         return err(e)
 
 
+@app.route("/api/views/resource-summary")
+def view_resource_summary():
+    try:
+        return ok(db.query("SELECT * FROM Resource_Owner_Summary ORDER BY total_billing DESC"))
+    except Exception as e:
+        return err(e)
+
+
 # ===========================================================================
 # STORED PROCEDURE
 # ===========================================================================
+
+@app.route("/api/procedures/flag-idle", methods=["POST"])
+def proc_flag_idle():
+    try:
+        conn = db.get_connection()
+        cur = conn.cursor(dictionary=True)
+        cur.callproc("flag_idle_resources")
+        rows = []
+        for result in cur.stored_results():
+            rows.extend(result.fetchall())
+        conn.commit()
+        conn.close()
+        return ok({"result": rows[0] if rows else {"suggestions_created": 0}})
+    except Exception as e:
+        return err(e)
+
 
 @app.route("/api/procedures/show-billing", methods=["POST"])
 def proc_show_billing():

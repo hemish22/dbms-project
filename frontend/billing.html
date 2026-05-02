@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Billing — Luminescent Cloud</title>
+<title>Billing — Hashtag Cloud</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -68,7 +68,7 @@
                     <span class="material-symbols-outlined text-primary text-[18px]">cloud</span>
                 </div>
                 <div>
-                    <h1 class="font-headline font-black text-sm md:text-base text-orange-500 uppercase tracking-widest leading-none hidden sm:block">Global</h1>
+                    <h1 class="font-headline font-black text-sm md:text-base text-orange-500 uppercase tracking-widest leading-none hidden sm:block">Hashtag</h1>
                 </div>
             </div>
             
@@ -226,10 +226,10 @@
             
             <div class="mt-8 flex justify-end items-center gap-4 border-t border-outline-variant/10 pt-6">
                 <button onclick="tryNegativeHours()" class="px-4 py-2.5 rounded-lg font-medium text-sm text-error bg-error/10 hover:bg-error/20 border border-error/20 transition-colors flex items-center gap-2" type="button">
-                    <span class="material-symbols-outlined text-[18px]">warning</span> Try Negative Hours
+                    <span class="material-symbols-outlined text-[18px]">warning</span> Test Trigger (Negative Hours)
                 </button>
                 <button onclick="addBill()" class="bg-primary-container text-on-primary-container px-6 py-2.5 rounded-lg font-medium text-sm hover:bg-[#ff9d22] transition-all hover:shadow-[0_0_20px_rgba(255,140,0,0.25)] flex items-center gap-2" type="submit">
-                    <span class="material-symbols-outlined text-[18px]">add</span> Inject Record
+                    <span class="material-symbols-outlined text-[18px]">add</span> Add Billing Record
                 </button>
             </div>
         </div>
@@ -238,20 +238,40 @@
         <div class="bg-surface-container-high rounded-xl p-8 relative overflow-hidden flex flex-col border-t-2 border-primary before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:to-transparent before:pointer-events-none group">
             <div class="flex justify-between items-start mb-6 relative z-10">
                 <h2 class="font-headline text-xl font-semibold text-on-surface flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">terminal</span> Batch Compute
+                    <span class="material-symbols-outlined text-primary">terminal</span> Billing Summary Report
                 </h2>
                 <div class="bg-surface-container-lowest px-2 py-1 rounded text-[10px] font-mono text-on-surface-variant uppercase tracking-wider border border-outline-variant/20">
-                    PROC_v2.4
+                    Stored Proc
                 </div>
             </div>
             <p class="font-body text-sm text-on-surface-variant mb-8 relative z-10 leading-relaxed">
                 Calls <code>CALL show_billing()</code> procedure — returns a joined billing summary with owner, resource, and cost details.
             </p>
             <button onclick="runProcedure()" class="mt-auto w-full bg-surface-container-lowest border border-primary/40 text-primary hover:bg-primary/10 px-6 py-3 rounded-lg font-mono text-sm transition-all flex justify-center items-center gap-3 relative z-10 group-hover:border-primary/80 group-hover:shadow-[0_0_15px_rgba(255,140,0,0.15)]">
-                <span class="material-symbols-outlined text-[18px]">play_arrow</span> EXECUTE_PROCEDURE
+                <span class="material-symbols-outlined text-[18px]">play_arrow</span> Run Procedure
             </button>
         </div>
         
+    </div>
+
+    <!-- Cursor Procedure Card -->
+    <div class="bg-surface-container-high rounded-xl p-6 border border-outline-variant/15 border-l-4 border-l-tertiary shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-tertiary">manage_search</span>
+                    <h2 class="font-headline text-lg font-semibold text-on-surface">Flag Idle Resources</h2>
+                    <span class="bg-surface-container-lowest px-2 py-0.5 rounded text-[10px] font-mono text-tertiary uppercase tracking-wider border border-tertiary/20">Cursor Procedure</span>
+                </div>
+                <p class="text-sm text-on-surface-variant max-w-2xl">Calls <code class="text-tertiary">CALL flag_idle_resources()</code> — uses a <strong class="text-on-surface">cursor</strong> to iterate all Running resources, identifies those with avg CPU &lt; 10%, and inserts an Optimization Suggestion for each idle candidate.</p>
+            </div>
+            <div class="flex items-center gap-4 shrink-0">
+                <button onclick="runCursorProc()" class="bg-tertiary/20 text-tertiary hover:bg-tertiary/30 border border-tertiary/30 px-5 py-2.5 rounded-lg font-mono text-sm transition-all flex items-center gap-2 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[18px]">play_arrow</span> Execute Cursor Scan
+                </button>
+                <div id="cursor-result" class="text-sm text-on-surface-variant font-mono min-w-[180px]"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Data Table -->
@@ -405,6 +425,20 @@ async function runProcedure() {
     renderTable("proc-modal-body", rows);
   } catch(e) {
     document.getElementById("proc-modal-body").innerHTML = `<p class="text-error">Error: ${e.message}</p>`;
+  }
+}
+
+async function runCursorProc() {
+  const resultEl = document.getElementById("cursor-result");
+  resultEl.textContent = "Running...";
+  try {
+    const data = await apiPost("/procedures/flag-idle");
+    const count = data.result.suggestions_created;
+    resultEl.innerHTML = `<span class="text-tertiary font-bold">${count} suggestion(s) created</span>`;
+    showToast(`Cursor scan complete. ${count} idle resource(s) flagged.`, "success");
+  } catch(e) {
+    resultEl.textContent = "Error: " + e.message;
+    showToast("Cursor error: " + e.message, "error");
   }
 }
 

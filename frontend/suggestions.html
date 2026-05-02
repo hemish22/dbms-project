@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Suggestions — Luminescent Cloud</title>
+<title>Suggestions — Hashtag Cloud</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -68,7 +68,7 @@
                     <span class="material-symbols-outlined text-primary text-[18px]">cloud</span>
                 </div>
                 <div>
-                    <h1 class="font-headline font-black text-sm md:text-base text-orange-500 uppercase tracking-widest leading-none hidden sm:block">Global</h1>
+                    <h1 class="font-headline font-black text-sm md:text-base text-orange-500 uppercase tracking-widest leading-none hidden sm:block">Hashtag</h1>
                 </div>
             </div>
             
@@ -191,7 +191,7 @@
     <div class="bg-surface-container-high rounded-xl border border-outline-variant/15 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
         <div class="h-[2px] w-full bg-gradient-to-r from-tertiary/50 to-transparent"></div>
         <div class="p-6 pb-4 border-b border-surface-variant/20 flex justify-between items-center">
-            <h3 class="font-headline text-lg font-semibold text-on-surface">Pending Actions (Read-Only)</h3>
+            <h3 class="font-headline text-lg font-semibold text-on-surface">Auto-Generated Suggestions</h3>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -289,7 +289,7 @@ async function loadSuggestions() {
         </td>
         <td class="py-4 px-6 text-on-surface"><span class="font-mono text-xs bg-surface-container-lowest border border-outline-variant/10 px-1.5 py-0.5 rounded mr-1">R${s.resource_id}</span> ${s.resource_type}</td>
         <td class="py-4 px-6"><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${typeBadgeCls}">${s.suggestion_type}</span></td>
-        <td class="py-4 px-6 text-on-surface-variant whitespace-normal min-w-[200px]" style="max-width:300px;"><div class="truncate text-xs" title="${s.reason.replace(/"/g, '&quot;')}">${s.reason}</div></td>
+        <td class="py-4 px-6 text-on-surface-variant whitespace-normal min-w-[250px]"><div class="text-xs leading-relaxed" title="${s.reason.replace(/"/g, '&quot;')}">${s.reason}</div></td>
         <td class="py-4 px-6 text-tertiary font-bold text-right">${fmtRs(s.estimated_savings)}</td>
         <td class="py-4 px-4 w-32">${aiActionBtn}</td>
       </tr>`;

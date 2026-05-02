@@ -1,11 +1,16 @@
 # Database and API configuration
-# Update DB_PASSWORD and GROQ_API_KEY before running
+# Copy .env.example to .env and fill in your values
 
-DB_HOST     = "localhost"
-DB_USER     = "root"
-DB_PASSWORD = "Iamgenius1"   # <-- change this
-DB_NAME     = "Cloud_Cost_Optimization"
+import os
+from dotenv import load_dotenv
 
-GROQ_API_KEY = ""    # <-- get from console.groq.com
-GROQ_MODEL_FAST = "llama-3.1-8b-instant"    # fast, for SQL generation
-GROQ_MODEL_CHAT = "llama-3.3-70b-versatile"   # smarter, for chatbot
+load_dotenv()
+
+DB_HOST     = os.getenv("DB_HOST", "localhost")
+DB_USER     = os.getenv("DB_USER", "root")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "")       # set in .env
+DB_NAME     = os.getenv("DB_NAME", "Cloud_Cost_Optimization")
+
+GROQ_API_KEY    = os.getenv("GROQ_API_KEY", "")   # get from console.groq.com
+GROQ_MODEL_FAST = os.getenv("GROQ_MODEL_FAST", "llama-3.1-8b-instant")
+GROQ_MODEL_CHAT = os.getenv("GROQ_MODEL_CHAT", "llama-3.3-70b-versatile")
